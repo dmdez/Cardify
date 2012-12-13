@@ -56,4 +56,4 @@ $('.htmlblock').cardify({
 And if there are more cards than options in the array, the rest of the cards will fall back on the last configured masthead.
 
 ## Demo
-http://dmmendez.github.com/Cardify/demo.html
+http://dmmendez.github.com/Cardify/
