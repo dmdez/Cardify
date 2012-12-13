@@ -25,17 +25,32 @@ $('.htmlblock').cardify({
 });
 ```
 
-### numLines=14
+### numLines=14 (int)
 Number of lines per card
 
-### chars=70
+### chars=70 (int)
 Number of characters to cut off horizontally.  Line breaks after word ends.
 
-### className='threebyfive'
+### className='threebyfive' (string)
 Class name to wrap the card with.  Useful when wrapping this plugin with dynamic interactions.
 
-### pageBreak=1
+### pageBreak=1 (int)
 How often to add a page break class to the card.  Set to '2' if a page break is needed every 2 cards... and so on.
+
+### masthead='%p of %n' (string), ['%p of %n', 'Continued... %p of %n'] (array)
+Add a mastead to each card.  
+    %p = Page Number
+    %n = Number of Total Pages
+
+By default, the output would be '1 of 2' for example. This options is also configured to accept an array to allow masthead configuration per page.
+
+```
+$('.htmlblock').cardify({
+    masthead: ['First Page! %p of %n', 'Second Page! %p of %n']
+});
+```
+
+And if there are more cards than options in the array, the rest of the cards will fall back on the last configured masthead.
 
 ## Demo
 http://dmmendez.github.com/Cardify/demo.html

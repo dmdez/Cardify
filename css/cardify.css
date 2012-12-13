@@ -1,9 +1,26 @@
 body { margin: 1em; font-size: 12pt; }
+fieldset { margin: 0 0 1em; }
 
 .cardify-card {
-    border: 2px dotted #666;
+    border: 1px dashed #666;
     margin: 0 0 1em;
     padding: .25in;
+    position: relative;
+    border-radius: 1em;
+}
+.cardify-card .masthead {
+    position: absolute;
+    top: .05in;
+    left: .25in;
+    right: .25in;
+    font-size: 10px;
+    color: #ccc;
+}
+.cardify-card .masthead .title {
+    float: left;
+}
+.cardify-card .masthead .page {
+    float: right;
 }
 
 .threebyfive,

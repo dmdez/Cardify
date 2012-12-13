@@ -5,16 +5,17 @@
     $.cardify = function (element, options) {
 
         var defaults = {
-            'numLines': 14,
-            'chars': 70,
-            'className': 'threebyfive',
-            'pageBreak': 1
+            'numLines'   : 14,
+            'chars'      : 70,
+            'className'  : 'threebyfive',
+            'pageBreak'  : 1,
+            'masthead'   : '%p of %n'
         }
 
         var cardify = this;
 
         cardify.settings = {};
-        cardify.currentCard = undefined;
+        cardify.currentCard = undefined;        
 
         var $element = $(element),
              element = element,
@@ -24,6 +25,7 @@
         cardify.init = function () {
             cardify.lineCount = 0;
             cardify.settings = $.extend({}, defaults, options);
+            cardify.cardCount = 1;
 
             $container.addClass(cardify.settings['className']);
             $element.after($container);
@@ -32,10 +34,12 @@
 
             $elements.each(parseElements);
 
+            $container.children().each(addMasthead);
+
             $container
-                    .children(':nth-child(' + cardify.settings.pageBreak + 'n+1)')
-                    .addClass('page-break')
-                    .first().removeClass('page-break');
+                .children(':nth-child(' + cardify.settings.pageBreak + 'n+1)')
+                .addClass('page-break')
+                .first().removeClass('page-break');
         };
 
         cardify.refresh = function (newopts) {
@@ -43,6 +47,25 @@
             options = newopts;
             $container.empty().removeClass();
             cardify.init();
+        }
+
+        function addMasthead(i) {
+            var $masthead = $('<div class="masthead" />');        
+            var mastheadTemplate = cardify.settings.masthead;
+
+            if ( typeof mastheadTemplate == "object" ) {
+                if ( mastheadTemplate[i] ) {
+                    mastheadTemplate = mastheadTemplate[i];
+                } else {
+                    mastheadTemplate = mastheadTemplate[mastheadTemplate.length - 1];
+                }
+            }
+
+            mastheadTemplate = mastheadTemplate.replace("%p", i+1);
+            mastheadTemplate = mastheadTemplate.replace("%n", cardify.cardCount);
+
+            $masthead.html(mastheadTemplate);
+            $(this).append($masthead);
         }
 
         function increaseLineCount() {
@@ -101,6 +124,7 @@
             var $card = $('<div class="cardify-card" />');
             cardify.currentCard = $card;
             $container.append($card);
+            cardify.cardCount++;
         }
 
         function wordwrap(str, width, cut) {

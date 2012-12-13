@@ -84,6 +84,7 @@
     var createCard = function() {
         var vals = $('.make-cards').serializeAnything();
         var options = variations[ vals.size + vals.fontsize ];
+        options.masthead = '<span class="title">Recipes</span> <span class="page">%p of %n</span>';
 
         if ( $('.cardify-this-mutha').data('cardify') ) {
             $('.cardify-this-mutha').data('cardify').refresh( options );
