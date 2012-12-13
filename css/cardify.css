@@ -1,0 +1,38 @@
+body { margin: 1em; font-size: 12pt; }
+
+.cardify-card {
+    border: 2px dotted #666;
+    margin: 0 0 1em;
+    padding: .25in;
+}
+
+.threebyfive,
+.fourbysix,
+.eightbyeleven
+ {
+    font-size: 12px;
+}
+
+.card-small { font-size: 11px; }
+.card-large { font-size: 14px; }
+
+.threebyfive .cardify-card {
+    width: 4.5in;
+    height: 2.5in;
+}
+.fourbysix .cardify-card {
+    width: 5.5in;
+    height: 3.5in;
+}
+.eightbyeleven .cardify-card {
+    width: 7in;
+    height: 9in;
+}
+
+.cardify-this-mutha { display: none; }
+
+@media print {
+    .cardify-wrapper { page-break-before: always; }
+    .make-cards { display: none; }
+    .page-break { page-break-before: always; }
+}
