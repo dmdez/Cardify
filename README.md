@@ -36,3 +36,6 @@ Class name to wrap the card with.  Useful when wrapping this plugin with dynamic
 
 ### pageBreak=1
 How often to add a page break class to the card.  Set to '2' if a page break is needed every 2 cards... and so on.
+
+## Demo
+http://dmmendez.github.com/Cardify/demo.html
