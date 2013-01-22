@@ -20,12 +20,15 @@
         var $element = $(element),
              element = element,
             $container = $('<div />'),
-            $elements = $element.find('p, ul, h1, h2, h3, h4');
+            $elements = $element.contents().filter(function () {
+                            var validNodes = ['p','ul','ol','h1','h2','h3','h4'];
+                            return this.nodeType == 3 || validNodes.indexOf(this.nodeName.toLowerCase()) > -1;
+                        });
 
         cardify.init = function () {
             cardify.lineCount = 0;
             cardify.settings = $.extend({}, defaults, options);
-            cardify.cardCount = 1;
+            cardify.cardCount = 0;
 
             $container.addClass(cardify.settings['className']);
             $element.after($container);
@@ -90,7 +93,8 @@
                     increaseLineCount();
                 };
 
-                $.each(lines, formatLine);
+                if ( lines && lines != null)
+                    $.each(lines, formatLine);
             };
 
             switch (nodeName) {
@@ -99,11 +103,19 @@
                     $(this).find('li').each(function () {
                         parseLines($(this).text())
                     });
+                    cardify.currentCard.append('<br />');
+                    increaseLineCount();        
+                    break;
+
+                case "#text":
+                    parseLines(this.nodeValue);
                     break;
 
                 case "p":
                 case "div":
                     parseLines($(this).text())
+                    cardify.currentCard.append('<br />');
+                    increaseLineCount();        
                     break;
 
                 case "h4":
@@ -111,12 +123,11 @@
                 case "h2":
                 case "h1":
                     parseLines($(this).text(), '<strong>', '</strong>');
-
+                    cardify.currentCard.append('<br />');
+                    increaseLineCount();        
                     break;
 
             }
-            cardify.currentCard.append('<br />');
-            increaseLineCount();        
         };
 
 
