@@ -84,6 +84,13 @@
     var createCard = function() {
         var vals = $('.make-cards').serializeAnything();
         var options = variations[ vals.size + vals.fontsize ];
+        options.allowedElements = {
+            'address': function(cardify, isLastItem) {
+                cardify.parseLines($(this).text());
+                if ( !isLastItem ) 
+                    cardify.addLineWithBreak();
+            }
+        }
         options.masthead = [
             '<span class="title">Recipes</span> <span class="page">%p of %n</span>',
             '<span class="title">Recipes (Continued)</span> <span class="page">%p of %n</span>'

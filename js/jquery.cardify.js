@@ -5,40 +5,41 @@
     $.cardify = function (element, options) {
 
         var defaults = {
-            'numLines'   : 14,
-            'chars'      : 70,
-            'className'  : 'threebyfive',
-            'pageBreak'  : 1,
-            'masthead'   : '%p of %n'
+            'numLines'       : 14,
+            'chars'          : 70,
+            'className'      : 'threebyfive',
+            'pageBreak'      : 1,
+            'masthead'       : '%p of %n',
+            'allowedElements': {
+                "ul"    : parseList,
+                "#text" : parseText,
+                "p"     : parseBlock,
+                "div"   : parseBlock,
+                "h4"    : parseHeader,
+                "h3"    : parseHeader,
+                "h2"    : parseHeader,
+                "h1"    : parseHeader
+            }
         }
 
         var cardify = this;
-
         cardify.settings = {};
         cardify.currentCard = undefined;        
 
         var $element = $(element),
              element = element,
-            $container = $('<div />'),
-            $elements = $element.contents().filter(function () {
-                            var validNodes = ['p','ul','ol','h1','h2','h3','h4'];
-                            return this.nodeType == 3 || validNodes.indexOf(this.nodeName.toLowerCase()) > -1;
-                        });
+            $elements = $element.contents(),
+            $container = $('<div />');
 
         cardify.init = function () {
             cardify.lineCount = 0;
-            cardify.settings = $.extend({}, defaults, options);
+            cardify.settings = $.extend(true, defaults, options);
             cardify.cardCount = 0;
 
             $container.addClass(cardify.settings['className']);
             $element.after($container);
-
-            createCard();
-
             $elements.each(parseElements);
-
             $container.children().each(addMasthead);
-
             $container
                 .children(':nth-child(' + cardify.settings.pageBreak + 'n+1)')
                 .addClass('page-break')
@@ -50,7 +51,23 @@
             options = newopts;
             $container.empty().removeClass();
             cardify.init();
-        }
+        };
+
+        cardify.addLineWithBreak = function(text) {
+            increaseLineCount();
+            cardify.currentCard.append((text ? text : "") + '<br />');            
+        };
+
+        cardify.parseLines = function(text, pre, post) {
+            var lines = wordwrap(text);
+            pre = pre || '';
+            post = post || '';
+
+            if ( lines && lines != null)
+                $.each(lines, function() {
+                    cardify.addLineWithBreak(pre + this + post);
+                });
+        };
 
         function addMasthead(i) {
             var $masthead = $('<div class="masthead" />');        
@@ -73,63 +90,23 @@
 
         function increaseLineCount() {
 
-            if (cardify.lineCount % cardify.settings.numLines == (cardify.settings.numLines - 1))
+            if (cardify.lineCount % cardify.settings.numLines == 0)
                 createCard();
 
             cardify.lineCount++;
         }
 
         function parseElements(i) {
+            var last = false;
+            console.log(cardify.settings.allowedElements);
+            var parsingFunction = cardify.settings.allowedElements[this.nodeName.toLowerCase()];
 
-            var nodeName = this.nodeName.toLowerCase();
+            if ( i == $elements.length-1)
+                last = true;
 
-            var parseLines = function (text, pre, post) {
-                var lines = wordwrap(text);
-                pre = pre || '';
-                post = post || '';
-
-                var formatLine = function (l) {
-                    cardify.currentCard.append(pre + this + post + '<br />');
-                    increaseLineCount();
-                };
-
-                if ( lines && lines != null)
-                    $.each(lines, formatLine);
-            };
-
-            switch (nodeName) {
-
-                case "ul":
-                    $(this).find('li').each(function () {
-                        parseLines($(this).text())
-                    });
-                    cardify.currentCard.append('<br />');
-                    increaseLineCount();        
-                    break;
-
-                case "#text":
-                    parseLines(this.nodeValue);
-                    break;
-
-                case "p":
-                case "div":
-                    parseLines($(this).text())
-                    cardify.currentCard.append('<br />');
-                    increaseLineCount();        
-                    break;
-
-                case "h4":
-                case "h3":
-                case "h2":
-                case "h1":
-                    parseLines($(this).text(), '<strong>', '</strong>');
-                    cardify.currentCard.append('<br />');
-                    increaseLineCount();        
-                    break;
-
-            }
-        };
-
+            if ( parsingFunction )
+                $.proxy(parsingFunction, this, cardify, last)();
+        }
 
         function createCard() {
             var $card = $('<div class="cardify-card" />');
@@ -147,6 +124,32 @@
             var regex = '.{1,' + width + '}(\\s|$)' + (cut ? '|.{' + width + '}|.+$' : '|\\S+?(\\s|$)');
 
             return str.match(RegExp(regex, 'g'));
+        }
+
+        function parseList(cardify, isLastItem) {
+            $(this).find('li').each(function () {
+                cardify.parseLines($(this).text())
+            });
+            if ( !isLastItem )
+                cardify.addLineWithBreak();
+        }
+
+        function parseText(cardify, isLastItem) {
+            var text = $(this).text().trim();
+            if ( text )
+                cardify.parseLines(text);
+        }
+
+        function parseBlock(cardify, isLastItem) {
+            cardify.parseLines($(this).text());
+            if ( !isLastItem ) 
+                cardify.addLineWithBreak();
+        }
+
+        function parseHeader(cardify, isLastItem) {
+            cardify.parseLines($(this).text(), '<strong>', '</strong>');
+            if ( !isLastItem ) 
+                cardify.addLineWithBreak();
         }
 
         cardify.init();
