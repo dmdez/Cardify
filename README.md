@@ -54,7 +54,7 @@ $('.htmlblock').cardify({
 ```
 And if there are more cards than options in the array, the rest of the cards will fall back on the last configured masthead.
 
-### allowedElements=`{ "element": function(cardify, isLastItem) { console.log('parse element'); } }` (object)
+### allowedElements=`{ "element": function() { } }` (object)
 Configure additional elements to be allowed, or change how an existing element is parsed and filtered.  
 
 ```
@@ -63,8 +63,7 @@ $('.htmlblock').cardify({
         'p': function() {}, // get rid of paragraph parsing
         'address': function(cardify, isLastItem) {
             cardify.parseLines($(this).text());
-            if ( !isLastItem ) 
-                cardify.addLineWithBreak();
+            if ( !isLastItem ) cardify.addLineWithBreak();
         }
     }
 });
