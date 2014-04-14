@@ -69,4 +69,4 @@ $('.htmlblock').cardify({
 });
 ```
 ## Demo
-http://dmmendez.github.com/Cardify/
+http://dmdez.github.io/Cardify/
